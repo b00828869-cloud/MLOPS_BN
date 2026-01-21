@@ -1,17 +1,18 @@
 from fastapi import FastAPI
-from schemas import ApartmentIn, PredictionOut
-from model import predict_price, MODEL_VERSION
+from schemas import Apartment
+from model import mock_model
 
-app = FastAPI(title="Apartment Valuation API")
+app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"status": "running", "model_version": MODEL_VERSION}
+    return {"message": "Apartment price API is running"}
 
-@app.post("/predict", response_model=PredictionOut)
-def predict(apartment: ApartmentIn):
-    price = predict_price(apartment)
-    return PredictionOut(
-        estimated_price=price,
-        model_version=MODEL_VERSION
-    )
+@app.post("/predict")
+def predict(apartment: Apartment):
+    price = mock_model(apartment.surface, apartment.rooms)
+    return {
+        "estimated_price": price,
+        "currency": "EUR"
+    }
+
